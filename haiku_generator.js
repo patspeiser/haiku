@@ -39,17 +39,20 @@ function RNG(syllableCount){
 //make sure we get 17 syllables
 // TODO update this to check each line as well instead of just total.
 function checkStructure(array){
-	var total = 0;
-	var oneTotal = 0;
-	var twoTotal = 0;
-	var threeTotal = 0;
+	var lineIsGood = false;
+	var line = 0;
+	var lineCount = [5,7,5];
 	array.forEach( function(lineArr){
-		
+		var lineCount = 0;
 		lineArr.forEach( function(el){
-			total+=el;
+			line+=el;
 		});
+		if (lineCount[line] != lineCount){
+			lineIsGood = false;
+		}
+		line++;
 	});
-	return total == 17 ? true : false;
+	return lineIsGood;
 };
 //console.log(checkStructure([[1,1,1,1,1,1],[1,1,2,2,1],[5]]));
 
@@ -75,17 +78,21 @@ function formatData(data){
 
 function createHaiku(structure){
 	var haiku = '';
-	structure.forEach( function(arr){
-		arr.forEach( function(el){
-			var word = getWord(el).toLowerCase();
-			haiku += word + ' ';
+	if(checkStructure(structure) === true){
+		structure.forEach( function(arr){
+			arr.forEach( function(el){
+				var word = getWord(el).toLowerCase();
+				haiku += word + ' ';
+			});
+			haiku += '\n';
 		});
-		haiku += '\n';
-	});
+	} else {
+		console.log('Hey! Make sure the structure you\'re passing in adds up to 17 total and that the lines are as follows, 5,7,5 in total.');
+	}
 	return haiku;			
 };
 
 formatData(dict);
-for (var i = 0; i < 200; i++){
-	console.log(createHaiku([[1,2,2],[3,2,2],[5]]))
+for (var i = 0; i < 5; i++){
+	console.log(createHaiku([[1,2,2,1,1],[3,2,2],[5]]))
 };
