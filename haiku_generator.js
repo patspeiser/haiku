@@ -46,7 +46,6 @@ function checkStructure(array){
 		lineArr.forEach( function(el){
 			lineCount+=el;
 		});
-		console.log(lineTotal, lineCount, line);
 		if (lineTotal[line] != lineCount){
 			lineIsGood = false;
 		}
@@ -79,6 +78,7 @@ function formatData(data){
 
 function createHaiku(structure){
 	var haiku = '';
+	formatData(dict);
 	if(checkStructure(structure) === true){
 		structure.forEach( function(arr){
 			arr.forEach( function(el){
@@ -92,9 +92,11 @@ function createHaiku(structure){
 	}
 	return haiku;			
 };
-
-formatData(dict);
+/*
 for (var i = 0; i < 5; i++){
 	console.log(createHaiku([[3,2],[3,1,3],[4,1]]))
 };
-
+*/
+module.exports = {
+	createHaiku: createHaiku
+};
