@@ -1,15 +1,21 @@
-//haiku generator
 var fs = require('fs');
-var dict = readDictionary('./cmudict.txt');
-var syllableMap = {};
 
-//reads dictionary file
-function readDictionary(file){
+//haiku generator
+function haiku_generator(){
+	this.filePath = './cmudict.txt';
+	console.log(this.filePath);
+	console.log('am i here');
+	this.dict = this.readDictionary(this.filePath);
+	this.syllableMap = {};
+}
+
+//read the dictionary file
+haiku_generator.prototype.readDictionary = function(file) {
 	return fs.readFileSync(file).toString();
 };
 
 //get syllable count of word
-function getSyllables(wordArray){
+haiku_generator.prototype.getSyllables = function(wordArray){
 	var syllables = 0;
 	for (var i = 2; i < wordArray.length; i++){
 		var hasNum = wordArray[i].substr(-1);
@@ -21,49 +27,50 @@ function getSyllables(wordArray){
 }
 
 // create an object where it breaks down words by syllable count.
-function pushToSyllableMap(word, syllables){
+haiku_generator.prototype.pushToSyllableMap = function(word, syllable){
 	if (!(syllables in syllableMap)){
-		syllableMap[syllables] = [word];
+		this.syllableMap[syllables] = [word];
 	} else {
-		syllableMap[syllables].push(word);
+		this.syllableMap[syllables].push(word);
 	}
 };
 
 //get a random number to use when looking up passed in structure array
-function RNG(syllableCount){
-	var max = syllableMap[syllableCount].length;
+haiku_generator.prototype.RNG = function(syllableCount){
+	var max = this.syllableMap[syllableCount].length;
 	var randomIndex = Math.floor(Math.random() * max);
 	return randomIndex;
 };
 
-//check line total. if not right prevent haiku-age
-function checkStructure(array){
-	var lineIsGood = true;
+//make sure the structure is correct
+haiku_generator.prototype.checkStructure = function(array){
+	var lineIsGood = false;
+	var thisLine = 0;
 	var line = 0;
-	var lineTotal = [5,7,5];
+	var lineCount = [5,12,17];
+	//get first array
 	array.forEach( function(lineArr){
-		var lineCount = 0;
+		//for each item in array
 		lineArr.forEach( function(el){
-			lineCount+=el;
+			thisLine+=el;
 		});
-		console.log(lineTotal, lineCount, line);
-		if (lineTotal[line] != lineCount){
-			lineIsGood = false;
+		if (lineCount[line] == thisLine){
+			lineIsGood = true;
 		}
 		line++;
 	});
-	
 	return lineIsGood;
 };
 //console.log(checkStructure([[1,1,1,1,1,1],[1,1,2,2,1],[5]]));
 
-function getWord(syllables){
+//get a word to add to our Haiku. needs a syllable count
+haiku_generator.prototype.getWord = function(syllables){
 	return syllableMap[syllables][RNG(syllables)];
 };
 //console.log(getWord(2));
 
 //get each row
-function formatData(data){
+haiku_generator.prototype.formatData = function(data){
 	var lines = data.toString().split("\n"),
 		lineSplit;
 	lines.forEach(function(line){
@@ -77,8 +84,11 @@ function formatData(data){
 	});
 };
 
-function createHaiku(structure){
+haiku_generator.prototype.createHaiku = function(structure){
 	var haiku = '';
+	this.readDictionary(this.dict);
+	this.formatData(this.dict);
+	
 	if(checkStructure(structure) === true){
 		structure.forEach( function(arr){
 			arr.forEach( function(el){
@@ -93,8 +103,8 @@ function createHaiku(structure){
 	return haiku;			
 };
 
-formatData(dict);
 for (var i = 0; i < 5; i++){
-	console.log(createHaiku([[3,2],[3,1,3],[4,1]]))
+	haiku_generator.prototype.createHaiku([[1,2,2],[3,2,2],[5]])
 };
 
+module.exports = haiku_generator;

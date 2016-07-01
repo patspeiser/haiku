@@ -1,10 +1,4 @@
 //haiku
+var haiku = require('./haiku_generator');
 
-function createHaiku(structure){
-	console.log('in haiku yay');
-};
-
-module.exports = {
-        createHaiku: createHaiku
-};
-
+console.log(haiku());
